@@ -26,7 +26,7 @@ public class PhoneResource {
     private static final Logger log = LoggerFactory.getLogger(PhoneResource.class);
 
     @GetMapping(value = "/{phone}", produces = {MediaType.APPLICATION_JSON_VALUE})
-    public ResponseEntity<ObjectNode> phone(@NotNull @Size(min = 1)
+    public PhoneResponse phone(@NotNull @Size(min = 1)
                                                 @PathVariable(value="phone") String phone) {
         log.debug("phone => {}", phone);
 /*        if (errors.hasErrors())  {
@@ -34,7 +34,8 @@ public class PhoneResource {
         } else {
             return ResponseEntity.ok(phoneValidator.toJsonNode());
         }*/
-        return null;
+
+        return new PhoneResponse(phone, "CZ");
     }
 
     @InitBinder("phoneValidator")
