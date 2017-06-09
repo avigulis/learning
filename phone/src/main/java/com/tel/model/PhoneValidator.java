@@ -7,7 +7,6 @@ import com.google.i18n.phonenumbers.PhoneNumberUtil;
 import com.google.i18n.phonenumbers.Phonenumber;
 import com.neovisionaries.i18n.CountryCode;
 import com.tel.service.PhoneService;
-import com.tel.util.DomainFilter;
 import com.tel.util.SpringContext;
 import org.hibernate.validator.constraints.NotBlank;
 import org.slf4j.Logger;
@@ -21,7 +20,7 @@ import javax.validation.constraints.Size;
 import java.math.BigInteger;
 import java.util.Optional;
 
-public class PhoneValidator implements Validator, DomainFilter {
+public class PhoneValidator implements Validator {
 
     private static final Logger log = LoggerFactory.getLogger(PhoneValidator.class);
     private static final PhoneNumberUtil phoneUtil = PhoneNumberUtil.getInstance();
@@ -86,14 +85,6 @@ public class PhoneValidator implements Validator, DomainFilter {
         }
 
         log.info("Number valid");
-    }
-
-    @Override
-    public ObjectNode toJsonNode() {
-        ObjectNode node = new ObjectNode(JsonNodeFactory.instance);
-        node.put("number", this.number);
-        node.put("country", this.country);
-        return node;
     }
 
     public String getNumber() { return number; }
