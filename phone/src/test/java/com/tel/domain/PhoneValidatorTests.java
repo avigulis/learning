@@ -1,4 +1,4 @@
-package com.tel.model;
+package com.tel.domain;
 
 import com.tel.service.PhoneService;
 import org.junit.Before;

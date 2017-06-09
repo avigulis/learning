@@ -1,7 +1,7 @@
 package com.tel.resource;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.tel.model.PhoneValidator;
+import com.tel.domain.PhoneValidator;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
