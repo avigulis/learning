@@ -13,6 +13,8 @@ import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 
 import static com.tel.util.ControllerUtils.getErrorMap;
 
@@ -22,17 +24,16 @@ public class PhoneResource {
 
     private static final Logger log = LoggerFactory.getLogger(PhoneResource.class);
 
-    @PostMapping("")
-    public ResponseEntity<ObjectNode> post(
-            @RequestBody @Valid PhoneValidator phoneValidator,
-            Errors errors
-    ) {
-        log.info("post => " + phoneValidator.toString());
-        if (errors.hasErrors())  {
+    @GetMapping("/{phone}")
+    public ResponseEntity<ObjectNode> phone(@NotNull @Size(min = 1)
+                                                @PathVariable(value="phone") String phone) {
+        log.debug("phone => {}", phone);
+/*        if (errors.hasErrors())  {
             return ResponseEntity.unprocessableEntity().body(getErrorMap(errors));
         } else {
             return ResponseEntity.ok(phoneValidator.toJsonNode());
-        }
+        }*/
+        return null;
     }
 
     @InitBinder("phoneValidator")
