@@ -3,8 +3,11 @@ package com.tel.resource;
 
 public class CountryCodeResponse {
 
-    private final String phone;
-    private final String country;
+    private String phone;
+    private String country;
+
+    public CountryCodeResponse() {
+    }
 
     public CountryCodeResponse(String phone, String country) {
         this.phone = phone;
@@ -17,5 +20,13 @@ public class CountryCodeResponse {
 
     public String getCountry() {
         return country;
+    }
+
+    public void setPhone(String phone) {
+        this.phone = phone;
+    }
+
+    public void setCountry(String country) {
+        this.country = country;
     }
 }

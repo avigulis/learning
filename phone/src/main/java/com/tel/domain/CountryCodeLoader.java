@@ -47,7 +47,7 @@ public class CountryCodeLoader implements InitializingBean {
                 Elements tds = tr.select("td");
                 if (tds.size() == 0) return;
                 // find country name in first column
-                String country = validatedCountryName(tds.get(0).text());
+                String country = findCountryName(tds.get(0).text());
                 // find all codes in second column
                 Elements codes = tds.get(1).select("[title]");
                 codes.forEach(code -> {
@@ -71,7 +71,7 @@ public class CountryCodeLoader implements InitializingBean {
         }
     }
 
-    private String validatedCountryName(String countryName) {
+    private String findCountryName(String countryName) {
         if (CountryCode.findByName(countryName).size() > 0) return countryName;
         else {
             log.info("Country name " + countryName + " not found");

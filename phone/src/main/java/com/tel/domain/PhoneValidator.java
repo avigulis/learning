@@ -13,6 +13,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static com.tel.domain.PhoneValidator.PhoneValidationError.errorWith;
+import static java.lang.String.format;
 import static java.util.Objects.isNull;
 
 
@@ -33,12 +34,12 @@ public class PhoneValidator {
         List<PhoneValidationError> errors = new ArrayList<>();
 
         if (isNull(phone) || phone.isEmpty()) {
-            errors.add(errorWith("countryCode.empty", "Phone number empty"));
+            errors.add(errorWith("phone.empty", "Phone number empty"));
             return errors;
         }
 
-        if (phone.matches("^[0-9]$")) {
-            errors.add(errorWith("countryCode.onlyDigitsAllowed", "Phone number contains forbidden symbols"));
+        if (!phone.matches("^\\d+$")) {
+            errors.add(errorWith("phone.onlyDigitsAllowed", "Phone number contains forbidden symbols"));
             return errors;
         }
 
@@ -46,13 +47,13 @@ public class PhoneValidator {
         BigInteger number = new BigInteger(phone);
         String country = countryCodeProvider.get(number).orElse(null);
         if (isNull(country)) {
-            errors.add(errorWith("countryCode.countryCodeNotExist", "Country code not exist for this countryCode number"));
+            errors.add(errorWith("phone.countryCodeNotExist", "Country code not exist for this countryCode number"));
             return errors;
         }
 
         Phonenumber.PhoneNumber phoneNumber = parsePhoneNumber(phone, country);
         if (isNull(phoneNumber)) {
-            errors.add(errorWith("countryCode.incorrectFormat", "Phone number incorrect format"));
+            errors.add(errorWith("phone.incorrectFormat", "Phone number incorrect format"));
         }
 
         return errors;
@@ -60,7 +61,7 @@ public class PhoneValidator {
 
     private Phonenumber.PhoneNumber parsePhoneNumber(String phone, String country) {
         try {
-            return phoneUtil.parse(phone, country);
+            return phoneUtil.parse(format("+%s", phone) , country);
         } catch (NumberParseException e) {
             return null;
         }
@@ -68,12 +69,15 @@ public class PhoneValidator {
 
     public static class PhoneValidationError {
 
-        private final String code;
-        private final String message;
+        private String code;
+        private String message;
 
         public PhoneValidationError(String code, String message) {
             this.code = code;
             this.message = message;
+        }
+
+        public PhoneValidationError() {
         }
 
         public static PhoneValidationError errorWith(String code, String message) {
@@ -90,6 +94,14 @@ public class PhoneValidator {
 
         public String getMessage() {
             return message;
+        }
+
+        public void setCode(String code) {
+            this.code = code;
+        }
+
+        public void setMessage(String message) {
+            this.message = message;
         }
     }
 

@@ -32,7 +32,7 @@ public class PhoneResourceTests {
     @Before
     public void setup() {
         assertThat(this.webApplicationContext, notNullValue());
-        phoneValidator = new PhoneValidator();
+        //phoneValidator = new PhoneValidator();
     }
 
     @Test
@@ -47,7 +47,7 @@ public class PhoneResourceTests {
     @Test
     public void testInvalidPhone() {
         // when empty request
-        phoneValidator.setNumber("+418379123847");
+        //phoneValidator.setNumber("+418379123847");
         ResponseEntity<ObjectNode> responseEntity = testRestTemplate.postForEntity("/phones", phoneValidator, ObjectNode.class);
 
         // then should return error
@@ -57,7 +57,7 @@ public class PhoneResourceTests {
     @Test
     public void testValidPhone() {
         // given a request with a valid countryCode
-        phoneValidator.setNumber("+15005550006");
+        //phoneValidator.setNumber("+15005550006");
         ResponseEntity<ObjectNode> responseEntity =
                 testRestTemplate.postForEntity("/phones", phoneValidator, ObjectNode.class);
 
