@@ -30,11 +30,11 @@ public class PhoneResource {
         this.phoneService = phoneService;
     }
 
-    @GetMapping(value = "/{phone}", produces = {MediaType.APPLICATION_JSON_VALUE})
-    public PhoneResponse phone(@NotNull @Size(min = 1, max = 15) @Pattern(regexp = "^[0-9]+$")
+    @GetMapping(value = "/{phone}/country-code", produces = {MediaType.APPLICATION_JSON_VALUE})
+    public CountryCodeResponse countryCode(@NotNull @Size(min = 1, max = 15) @Pattern(regexp = "^[0-9]+$")
                                                 @PathVariable(value="phone") String phone) {
         log.debug("phone => {}", phone);
-        return new PhoneResponse(phone, phoneService.countryCodeFromPhoneNumber(phone));
+        return new CountryCodeResponse(phone, phoneService.countryCodeFromPhoneNumber(phone));
     }
 
     @ExceptionHandler(HttpMessageNotReadableException.class)

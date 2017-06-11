@@ -56,7 +56,7 @@ public class PhoneResourceTests {
 
     @Test
     public void testValidPhone() {
-        // given a request with a valid phone
+        // given a request with a valid countryCode
         phoneValidator.setNumber("+15005550006");
         ResponseEntity<ObjectNode> responseEntity =
                 testRestTemplate.postForEntity("/phones", phoneValidator, ObjectNode.class);

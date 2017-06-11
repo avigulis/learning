@@ -31,7 +31,7 @@ public class CountryCodeLoader implements InitializingBean {
 
     @Autowired
     public CountryCodeLoader(CountryCodeProvider countryCodeProvider,
-                             @Value("${phone.code.url}") String phoneCodeUrl) {
+                             @Value("${countryCode.code.url}") String phoneCodeUrl) {
         this.countryCodeProvider = countryCodeProvider;
         this.phoneCodeUrl = phoneCodeUrl;
     }

@@ -34,27 +34,26 @@ public class PhoneValidator {
         List<PhoneValidationError> errors = new ArrayList<>();
 
         if (isNull(phone) || phone.isEmpty()) {
-            errors.add(errorWith("phone.empty", "Phone number empty"));
+            errors.add(errorWith("countryCode.empty", "Phone number empty"));
             return errors;
         }
 
         if (phone.matches("^[0-9]$")) {
-            errors.add(errorWith("phone.onlyDigitsAllowed", "Phone number contains forbidden symbols"));
+            errors.add(errorWith("countryCode.onlyDigitsAllowed", "Phone number contains forbidden symbols"));
             return errors;
         }
 
 
         BigInteger number = new BigInteger(phone);
-        // Validate for country
         String country = countryCodeProvider.get(number).orElse(null);
         if (isNull(country)) {
-            errors.add(errorWith("phone.countryCodeNotExist", "Country code not exist for this phone number"));
+            errors.add(errorWith("countryCode.countryCodeNotExist", "Country code not exist for this countryCode number"));
             return errors;
         }
 
         Phonenumber.PhoneNumber phoneNumber = parsePhoneNumber(phone, country);
         if (isNull(phoneNumber)) {
-            errors.add(errorWith("phone.incorrectFormat", "Phone number incorrect format"));
+            errors.add(errorWith("countryCode.incorrectFormat", "Phone number incorrect format"));
         }
 
         return errors;

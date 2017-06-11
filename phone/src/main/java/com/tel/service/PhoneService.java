@@ -7,7 +7,6 @@ import org.springframework.stereotype.Service;
 
 import java.math.BigInteger;
 import java.util.List;
-import java.util.Objects;
 
 @Service
 public class PhoneService {
@@ -22,8 +21,6 @@ public class PhoneService {
     }
 
     public String countryCodeFromPhoneNumber(String phone) {
-        Objects.requireNonNull(phone, "Empty phone number");
-
         List<PhoneValidator.PhoneValidationError> errors = phoneValidator.validate(phone);
         if (!errors.isEmpty()) {
             throw new RuntimeException();
