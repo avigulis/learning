@@ -7,11 +7,12 @@ import java.math.BigInteger;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
+import java.util.concurrent.ConcurrentHashMap;
 
 @Component
 public class CountryCodeProvider {
 
-    private static final Map<BigInteger, String> countryCode = new HashMap<>();
+    private static final Map<BigInteger, String> countryCode = new ConcurrentHashMap<>();
 
     public void load(BigInteger s, String country) {
         Assert.notNull(s, "Number required");
