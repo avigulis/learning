@@ -1,6 +1,5 @@
 package com.tel.domain;
 
-import com.tel.service.PhoneService;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -25,7 +24,7 @@ import static org.hamcrest.core.IsNull.nullValue;
 public class PhoneValidatorTests {
 
     @Autowired
-    PhoneService phoneService;
+    CountryCodeProvider phoneService;
 
     PhoneValidator phoneValidator;
     Errors errors;

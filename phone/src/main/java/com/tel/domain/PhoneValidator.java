@@ -4,14 +4,17 @@ import com.google.i18n.phonenumbers.NumberParseException;
 import com.google.i18n.phonenumbers.PhoneNumberUtil;
 import com.google.i18n.phonenumbers.Phonenumber;
 import com.neovisionaries.i18n.CountryCode;
-import com.tel.service.PhoneService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.math.BigInteger;
-import java.util.Objects;
+import java.util.ArrayList;
+import java.util.List;
+
+import static com.tel.domain.PhoneValidator.PhoneValidationError.errorWith;
+import static java.util.Objects.isNull;
 
 
 @Component
@@ -19,61 +22,73 @@ public class PhoneValidator {
     private static final Logger log = LoggerFactory.getLogger(PhoneValidator.class);
     private static final PhoneNumberUtil phoneUtil = PhoneNumberUtil.getInstance();
 
-
-    private final PhoneService phoneService;
+    private final CountryCodeProvider countryCodeProvider;
 
     @Autowired
-    public PhoneValidator(PhoneService phoneService) {
-        this.phoneService = phoneService;
+    public PhoneValidator(CountryCodeProvider countryCodeProvider) {
+        this.countryCodeProvider = countryCodeProvider;
     }
 
-    public String validate(String phone) {
+    public List<PhoneValidationError> validate(String phone) {
 
-        Objects.nonNull(phone);
+        List<PhoneValidationError> errors = new ArrayList<>();
 
-        log.info("Begin custom validation: {}", phone);
-
-
-        // Validate for number
-        BigInteger number = null;
-        try {
-            number = new BigInteger(phone.replaceAll("[^0-9]", ""));
-        } catch (NumberFormatException e) {
-            log.error("Number is not a string: {}", phone);
-            //errors.rejectValue("number", "", "number.invalid");
-            throw new RuntimeException("number.invalid");
+        if (isNull(phone) || phone.isEmpty()) {
+            errors.add(errorWith("phone.empty", "Phone number empty"));
+            return errors;
         }
 
+        if (phone.matches("^[0-9]$")) {
+            errors.add(errorWith("phone.onlyDigitsAllowed", "Phone number contains forbidden symbols"));
+            return errors;
+        }
+
+
+        BigInteger number = new BigInteger(phone);
         // Validate for country
-        String country = phoneService.get(number).orElseThrow(() -> {
-            //errors.rejectValue("number", "", "country.invalid");
-            return new RuntimeException("country.invalid");
-        });
-        log.debug("Number has country: {}", country);
+        String country = countryCodeProvider.get(number).orElse(null);
+        if (isNull(country)) {
+            errors.add(errorWith("phone.countryCodeNotExist", "Country code not exist for this phone number"));
+            return errors;
+        }
 
-        // Validate for phone
-        boolean countryValid = CountryCode.findByName(country).size() > 0;
-        log.debug("Country code available? {}", countryValid);
-        Phonenumber.PhoneNumber phoneNumber = null;
+        Phonenumber.PhoneNumber phoneNumber = parsePhoneNumber(phone, country);
+        if (isNull(phoneNumber)) {
+            errors.add(errorWith("phone.incorrectFormat", "Phone number incorrect format"));
+        }
+
+        return errors;
+    }
+
+    private Phonenumber.PhoneNumber parsePhoneNumber(String phone, String country) {
         try {
-            if (countryValid) {
-                CountryCode countryCode = CountryCode.findByName(country).get(0);
-                phoneNumber = phoneUtil.parse(phone, countryCode.getAlpha2());
-            } else {
-                phoneNumber = phoneUtil.parse(phone, country);
-            }
+            return phoneUtil.parse(phone, country);
         } catch (NumberParseException e) {
-            //errors.rejectValue("number", "", "number.invalid");
-            throw new RuntimeException("number.invalid");
+            return null;
+        }
+    }
+
+    public static class PhoneValidationError {
+
+        private final String code;
+        private final String message;
+
+        public PhoneValidationError(String code, String message) {
+            this.code = code;
+            this.message = message;
         }
 
-        if (!phoneUtil.isValidNumber(phoneNumber)) {
-            //errors.rejectValue("number", "", "number.invalid");
-            throw new RuntimeException("number.invalid");
+        public static PhoneValidationError errorWith(String code, String message) {
+            return new PhoneValidationError(code, message);
         }
 
-        log.info("Number valid");
-        return country;
+        public String getCode() {
+            return code;
+        }
+
+        public String getMessage() {
+            return message;
+        }
     }
 
 }

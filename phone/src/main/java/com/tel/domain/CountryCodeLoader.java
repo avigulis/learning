@@ -1,4 +1,4 @@
-package com.tel.service;
+package com.tel.domain;
 
 import com.neovisionaries.i18n.CountryCode;
 import info.debatty.java.stringsimilarity.Levenshtein;
@@ -11,7 +11,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 import java.math.BigInteger;
@@ -19,18 +19,22 @@ import java.net.UnknownHostException;
 import java.util.Arrays;
 import java.util.Optional;
 
-@Service
-public class PhoneLoader implements InitializingBean {
+@Component
+public class CountryCodeLoader implements InitializingBean {
 
-    private static final Logger log = LoggerFactory.getLogger(PhoneLoader.class);
+    private static final Logger log = LoggerFactory.getLogger(CountryCodeLoader.class);
     private static final Levenshtein levenshtein = new Levenshtein();
     private static final double LEVENSHTEIN_DISTANCE = 2;
 
-    @Autowired
-    PhoneService phoneService;
+    private final CountryCodeProvider countryCodeProvider;
+    private final String phoneCodeUrl;
 
-    @Value("${phone.code.url}")
-    String phoneCodeUrl;
+    @Autowired
+    public CountryCodeLoader(CountryCodeProvider countryCodeProvider,
+                             @Value("${phone.code.url}") String phoneCodeUrl) {
+        this.countryCodeProvider = countryCodeProvider;
+        this.phoneCodeUrl = phoneCodeUrl;
+    }
 
     private void loadPhones() {
         try {
@@ -53,9 +57,9 @@ public class PhoneLoader implements InitializingBean {
                     if (countryCode.contains(",")) {
                         Arrays
                         .asList(countryCode.split(","))
-                        .forEach(x -> phoneService.load(new BigInteger(x), country));
+                        .forEach(x -> countryCodeProvider.load(new BigInteger(x), country));
                     } else {
-                        phoneService.load(new BigInteger(countryCode), country);
+                        countryCodeProvider.load(new BigInteger(countryCode), country);
                     }
                 });
             });

@@ -1,5 +1,6 @@
 package com.tel.service;
 
+import com.tel.domain.CountryCodeLoader;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -18,18 +19,18 @@ import static org.hamcrest.core.IsNull.notNullValue;
 public class PhoneLoaderTests {
 
     @Autowired
-    PhoneLoader phoneLoader;
+    CountryCodeLoader phoneLoader;
 
     @Before
     public void setup() {
         assertThat(phoneLoader, notNullValue());
         assertThat(phoneLoader.phoneCodeUrl, notNullValue());
-        assertThat(phoneLoader.phoneService, notNullValue());
+        assertThat(phoneLoader.countryCodeProvider, notNullValue());
     }
 
     @Test
     public void testCountryLoad() {
         // expect countries to be loaded
-        assertThat(phoneLoader.phoneService.get(new BigInteger("371")).get(), is("Latvia"));
+        assertThat(phoneLoader.countryCodeProvider.get(new BigInteger("371")).get(), is("Latvia"));
     }
 }

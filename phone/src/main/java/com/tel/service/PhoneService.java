@@ -1,34 +1,35 @@
 package com.tel.service;
 
+import com.tel.domain.CountryCodeProvider;
+import com.tel.domain.PhoneValidator;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.util.Assert;
 
 import java.math.BigInteger;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
+import java.util.List;
+import java.util.Objects;
 
 @Service
 public class PhoneService {
 
-    private static final Map<BigInteger, String> countryCode = new HashMap<>();
+    private final CountryCodeProvider countryCodeProvider;
+    private final PhoneValidator phoneValidator;
 
-    public void load(BigInteger s, String country) {
-        Assert.notNull(s, "Number required");
-        Assert.notNull(country, "Country required");
-        countryCode.put(s, country);
+    @Autowired
+    public PhoneService(CountryCodeProvider countryCodeProvider, PhoneValidator phoneValidator) {
+        this.countryCodeProvider = countryCodeProvider;
+        this.phoneValidator = phoneValidator;
     }
 
-    public Optional<String> get(BigInteger number) {
-        if (countryCode.containsKey(number)) return Optional.ofNullable(countryCode.get(number));
-        else return get(shortenNumber(number));
+    public String countryCodeFromPhoneNumber(String phone) {
+        Objects.requireNonNull(phone, "Empty phone number");
+
+        List<PhoneValidator.PhoneValidationError> errors = phoneValidator.validate(phone);
+        if (!errors.isEmpty()) {
+            throw new RuntimeException();
+        }
+
+        return countryCodeProvider.get(new BigInteger(phone)).get();
     }
 
-    private BigInteger shortenNumber(BigInteger number) {
-        Assert.notNull(number, "Number required");
-        String numberString = number.toString();
-        numberString = numberString.substring(0, numberString.length() - 1);
-        if (numberString.equals("")) return null;
-        else return new BigInteger(numberString);
-    }
 }
