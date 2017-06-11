@@ -8,11 +8,11 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
+import javax.annotation.PostConstruct;
 import java.io.IOException;
 import java.math.BigInteger;
 import java.net.UnknownHostException;
@@ -20,7 +20,7 @@ import java.util.Arrays;
 import java.util.Optional;
 
 @Component
-public class CountryCodeLoader implements InitializingBean {
+public class CountryCodeLoader {
 
     private static final Logger log = LoggerFactory.getLogger(CountryCodeLoader.class);
     private static final Levenshtein levenshtein = new Levenshtein();
@@ -85,8 +85,8 @@ public class CountryCodeLoader implements InitializingBean {
         }
     }
 
-    @Override
-    public void afterPropertiesSet() throws Exception {
+    @PostConstruct
+    public void init() {
         loadPhones();
     }
 }
