@@ -2,11 +2,14 @@ package com.tel.service;
 
 import com.tel.domain.CountryCodeProvider;
 import com.tel.domain.PhoneValidator;
+import com.tel.resource.PhoneValidationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.math.BigInteger;
 import java.util.List;
+
+import static com.tel.domain.PhoneValidator.PhoneValidationError.unknown;
 
 @Service
 public class PhoneService {
@@ -23,10 +26,11 @@ public class PhoneService {
     public String countryCodeFromPhoneNumber(String phone) {
         List<PhoneValidator.PhoneValidationError> errors = phoneValidator.validate(phone);
         if (!errors.isEmpty()) {
-            throw new RuntimeException();
+            throw new PhoneValidationException(phone, errors);
         }
 
-        return countryCodeProvider.get(new BigInteger(phone)).get();
+        return countryCodeProvider.get(new BigInteger(phone))
+                .orElseThrow(() -> new PhoneValidationException(phone, unknown()));
     }
 
 }

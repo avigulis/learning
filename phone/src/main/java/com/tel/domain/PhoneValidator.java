@@ -3,7 +3,6 @@ package com.tel.domain;
 import com.google.i18n.phonenumbers.NumberParseException;
 import com.google.i18n.phonenumbers.PhoneNumberUtil;
 import com.google.i18n.phonenumbers.Phonenumber;
-import com.neovisionaries.i18n.CountryCode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -79,6 +78,10 @@ public class PhoneValidator {
 
         public static PhoneValidationError errorWith(String code, String message) {
             return new PhoneValidationError(code, message);
+        }
+
+        public static PhoneValidationError unknown() {
+            return new PhoneValidationError("unknown", "unknown");
         }
 
         public String getCode() {
